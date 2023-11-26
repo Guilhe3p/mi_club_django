@@ -1,0 +1,40 @@
+{% load static %}
+
+<div class="bg-dark p-3 ">
+    <div class="row justify-content-between">
+      <p class="navbar-brand p-3">
+        <img src="{% static 'core/img/escudo.png' %}" width="30" height="30" alt=""> SuperClub
+      </p>
+
+      <div class="row justify-content-between p-2 m-2">
+        <h4>Siguenos en</h4>
+        <span>
+        <a href="">
+          <img class="border border-white rounded-circle p-1 ml-2" src="{% static 'core/img/icons/insta2.png' %}" style="width: 30px;">
+        </a>
+        <a href="">
+          <img class="border border-white rounded-circle p-1 ml-2" src="{% static 'core/img/icons/insta2.png' %}" style="width: 30px;">
+        </a>
+        <a href="">
+          <img class="border border-white rounded-circle p-1 ml-2" src="{% static 'core/img/icons/insta2.png' %}" style="width: 30px;">
+        </a>
+        </span>
+      </div>
+    
+    </div>
+    <nav class="navbar navbar-expand navbar-dark">
+        
+        <div class="collapse navbar-collapse justify-content-center" id="navbarNavAltMarkup">
+          <div class="navbar-nav row justify-content-center">
+            <a class="nav-item nav-link active mx-4" href="{% url 'index' %}">Inicio     <span class="sr-only">(current)</span></a>
+            <a class="nav-item nav-link active mx-4" href="{% url 'actividades' %}">Actividades <span class="sr-only">(current)</span></a>
+            <a class="nav-item nav-link active mx-4" href="#">Pricing  <span class="sr-only">(current)</span></a>
+            <a class="nav-item nav-link active mx-4" href="#">Disabled <span class="sr-only">(current)</span></a>
+          </div>
+        </div>
+    </nav>
+    
+    <hr class="hr w-75">
+    
+    <p class="text-center">© 2023 SuperClub, Inc</p>
+</div>
