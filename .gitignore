@@ -1,0 +1,7 @@
+core/__pycache__/
+socios/__pycache__/
+mi_club/__pycache__/
+core/static/core/img/*
+core/static/core/fontawesome/*
+core/migrations/
+*.pyc
