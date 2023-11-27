@@ -8,5 +8,6 @@ urlpatterns = [
     # path('actividades/<str:actividad>', views.actividad, name="detalle_actividad"),
     path('contacto',views.Contacto.as_view(),name="contacto"),
     # path('listado_actividades',views.ListaActividades.as_view(),name="lista_actividad"),
+    path('login', views.loginView, name = "login"),
     path('miPerfil/', include('socios.urls'))
 ]

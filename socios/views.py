@@ -15,3 +15,6 @@ class Perfil(LoginRequiredMixin, View):
             'socio' : User.objects.filter(id = self.request.user.id)[0]
         }
         return render(request,self.template_name,context)
+    
+class GrupoFamiliar(Perfil):
+    template_name = "socios/grupo_familiar.html"

@@ -40,7 +40,8 @@ class SocioAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         #modifico el username y guardo el usuario
-        obj.username = username=form.cleaned_data['dni']    
+        obj.username = username=form.cleaned_data['dni']
+        obj.set_password(form.cleaned_data['dni'])      
         super().save_model(request, obj, form, change)
 
         #si existe el grupo familiar añado al usuario de otra forma creo uno nuevo

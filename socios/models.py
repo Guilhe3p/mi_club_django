@@ -18,12 +18,17 @@ class User(AbstractUser):
     
     def get_mensualidad_movil(self):
         suma = 0
-        actividades = Curso.objects.filter(alumnos = self)
 
-        for i in range(actividades):
-            suma += actividades[i].mensualidad
+        for actividad in self.get_actividades():
+            suma += actividad.mensualidad
     
         return suma
+
+    def get_actividades(self):
+        return Curso.objects.filter(alumnos = self)
+    
+    def get_grupo_familiar(self):
+        return SocioGrupo.objects.get(socio = self).grupo
 
 class Actividad(models.Model):
     nombre = models.CharField(max_length=30, unique=True)
@@ -77,6 +82,19 @@ class Curso(models.Model):
             raise ValidationError("La mensualidad no puede ser negativa")
 
         return self.cleaned_data['mensualidad']
+    
+    def get_dias(self):
+        cadena = ""
+        for dia in self.dias.all():
+            cadena += f" {dia.dia}"
+
+        return cadena
+    
+    def get_horario(self):
+        desdeF = f"{int(self.desde)}:{int(self.desde*60 % 60)}"
+        hastaF = f"{int(self.hasta)}:{int(self.hasta*60 % 60)}"
+
+        return {'desde':desdeF,'hasta':hastaF}
 
 class Inscripcion(models.Model):
     curso = models.ForeignKey(Curso, on_delete=models.CASCADE)
@@ -103,10 +121,18 @@ class GrupoFamiliar(models.Model):
     integrantes = models.ManyToManyField(User, through="SocioGrupo")
 
     def __str__(self) -> str:
-        return f'Familia {self.nombre}'
+        return f'Familia {self.nombre} {str([i.first_name for i in self.integrantes.all()])}'
     
     class Meta:
         verbose_name_plural = "grupos familiares"
+
+    def cuota_movil_total(self):
+        total = 0
+        for integrante in self.integrantes:
+            total += integrante.get_mensualidad_movil()
+        return total
+    
+    
 
 class SocioGrupo(models.Model):
     grupo = models.ForeignKey(GrupoFamiliar,on_delete=models.CASCADE)
