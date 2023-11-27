@@ -7,14 +7,12 @@ from .models import *
 
 
 #Register your models here.
-admin.site.register(Curso)
 admin.site.register(Predio)
 admin.site.register(Actividad)
 admin.site.register(DiaCurso)
 admin.site.register(GrupoFamiliar)
 admin.site.register(SocioGrupo)
 admin.site.register(Pago)
-admin.site.register(CambioMensualidadFija)
 admin.site.register(Categoria)
 admin.site.register(Comunicado)
 
@@ -24,26 +22,45 @@ admin.site.index_title = "Tablas"
 admin.site.site_header = "Administración del clu"
 admin.site.site_title = "El super clú"
 
+
+'''agregar comunicado junto con cambio de mensualidad'''
+@admin.register(CambioMensualidadFija)
+class CambioMensualidad(admin.ModelAdmin):
+    def save_model(self, request: Any, obj: Any, form: Any, change: Any) -> None:
+        obj.save()
+        cuerpo = obj.get_comunicado()
+        titulo = "Cambio de mensualidad fija"
+        seccion = Categoria.objects.get(id=2)
+        comunicado = Comunicado(titulo=titulo,cuerpo=cuerpo,seccion=seccion,fecha=obj.fecha)
+        comunicado.save()
+        return
+
+'''agregar un curso con solo docentes como opcion'''
+@admin.register(Curso)
+class AgregarCurso(admin.ModelAdmin):
+    def get_form(self, request, *args, **kwargs):
+        form = super(AgregarCurso, self).get_form(request, *args, **kwargs)
+        form.base_fields['docente'].queryset = User.objects.filter(groups__name='docente')
+        return form
+    
 '''agregar alumno a curso desde docente'''
-class AgregarAlumnoForm(forms.ModelForm):
-    class Meta:
-        model = Inscripcion
-        fields = "__all__"
-
-
 @admin.register(Inscripcion)
 class InscripcionAlumno(admin.ModelAdmin):
 
     def get_form(self, request, *args, **kwargs):
         form = super(InscripcionAlumno, self).get_form(request, *args, **kwargs)
-        form.base_fields['curso'].queryset = Curso.objects.filter(docente=request.user)
+        if request.user.is_superuser :
+            qs = Curso.objects.all()
+        else:
+            qs = Curso.objects.filter(docente=request.user)
+        form.base_fields['curso'].queryset = qs
         return form
 
 
 '''Agregar socio a grupo familiar existente'''
 class AgregarSocioForm(forms.ModelForm):
     grupo = forms.ModelChoiceField(GrupoFamiliar.objects)
-    es_docente = forms.BooleanField()
+    es_docente = forms.BooleanField(required=False)
 
     class Meta:
         model = User

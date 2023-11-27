@@ -98,19 +98,18 @@ class Curso(models.Model):
         return cadena
     
     def get_horario(self):
-        desdeHoras = str(int(self.desde))
-        hastaHoras = str(int(self.hasta))
-        for i in [desdeHoras,hastaHoras]:
-            if len(i) == 1:
-                i = "0"+i
+        horas = [str(int(self.desde)),str(int(self.hasta))]
+        for i in range(len(horas)):
+            if len(horas[i]) == 1:
+                horas[i] = "0" + horas[i]
 
-        desdeMinutos = str(int(self.desde*60 % 60))
-        hastaMinutos = str(int(self.hasta*60 % 60))
-        for i in [desdeHoras,hastaHoras]:
-            if len(i) == 1:
-                i += "0"
+        minutos = [str(int(self.desde*60 % 60)),str(int(self.hasta*60 % 60))]
+        for i in range(len(minutos)):
+            if len(minutos[i]) == 1:
+                minutos[i] = minutos[i] + "0"
 
-        return {'desde':f'{desdeHoras}:{desdeMinutos}','hasta':f'{hastaHoras}:{hastaMinutos}'}
+
+        return {'desde':f'{horas[0]}:{minutos[0]}','hasta':f'{horas[1]}:{minutos[1]}'}
 
 class Inscripcion(models.Model):
     curso = models.ForeignKey(Curso, on_delete=models.CASCADE)
@@ -155,7 +154,7 @@ class GrupoFamiliar(models.Model):
         return Pago.objects.filter(grupo = self).order_by('-fecha')
     
     def pagos_mes_actual(self):
-        pagos_mes_actual = self.get_historial_pagos().filter(fecha__month=timezone.now())
+        pagos_mes_actual = self.get_historial_pagos().filter(fecha__month=timezone.now)
         suma = 0
         for pago in pagos_mes_actual:
             suma += pago.monto
@@ -204,7 +203,7 @@ class Comunicado(models.Model):
     titulo = models.CharField(max_length=50)
     seccion = models.ForeignKey(Categoria, on_delete=models.DO_NOTHING)
     cuerpo = models.CharField(default="")
-    fecha = models.DateField(default=timezone.now())
+    fecha = models.DateField(default=timezone.now)
 
     def __str__(self) -> str:
         return f'{self.seccion}, {self.titulo}, {self.fecha}'
