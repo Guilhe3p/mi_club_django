@@ -1,3 +1,5 @@
+from collections.abc import Mapping
+from typing import Any
 from django.contrib import admin
 from django import forms
 from django.contrib.auth.models import Group
@@ -8,7 +10,6 @@ from .models import *
 admin.site.register(Curso)
 admin.site.register(Predio)
 admin.site.register(Actividad)
-admin.site.register(Inscripcion)
 admin.site.register(DiaCurso)
 admin.site.register(GrupoFamiliar)
 admin.site.register(SocioGrupo)
@@ -23,15 +24,26 @@ admin.site.index_title = "Tablas"
 admin.site.site_header = "Administración del clu"
 admin.site.site_title = "El super clú"
 
+'''agregar alumno a curso desde docente'''
+class AgregarAlumnoForm(forms.ModelForm):
+    class Meta:
+        model = Inscripcion
+        fields = "__all__"
 
 
+@admin.register(Inscripcion)
+class InscripcionAlumno(admin.ModelAdmin):
 
-    
+    def get_form(self, request, *args, **kwargs):
+        form = super(InscripcionAlumno, self).get_form(request, *args, **kwargs)
+        form.base_fields['curso'].queryset = Curso.objects.filter(docente=request.user)
+        return form
 
 
 '''Agregar socio a grupo familiar existente'''
 class AgregarSocioForm(forms.ModelForm):
     grupo = forms.ModelChoiceField(GrupoFamiliar.objects)
+    es_docente = forms.BooleanField()
 
     class Meta:
         model = User
@@ -47,7 +59,16 @@ class SocioAdmin(admin.ModelAdmin):
         #modifico el username y guardo el usuario
         obj.username = username=form.cleaned_data['dni']
         obj.set_password(form.cleaned_data['dni'])      
+
+        #si es docente le doy ser staff
+        if form.cleaned_data['es_docente']:
+            obj.is_staff = True
+
         super().save_model(request, obj, form, change)
+
+        if form.cleaned_data['es_docente']:
+            grupo_docente = Group.objects.get(name='docente') 
+            grupo_docente.user_set.add(obj)
 
         #si existe el grupo familiar añado al usuario de otra forma creo uno nuevo
         if form.cleaned_data['grupo'].nombre == "nueva":

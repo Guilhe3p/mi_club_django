@@ -171,7 +171,7 @@ class SocioGrupo(models.Model):
     socio = models.OneToOneField(User, on_delete=models.CASCADE)
 
     def __str__(self) -> str:
-        return f"{self.socio} de la familia {self.grupo}"
+        return f"{self.socio} de la {self.grupo}"
 
 #pagos de mensualidad y montos fijos/moviles
 class Pago(models.Model):
