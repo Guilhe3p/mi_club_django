@@ -16,6 +16,14 @@ class User(AbstractUser):
     def __str__(self) -> str:
         return f"{self.first_name.capitalize()} {self.last_name.capitalize()} - {self.dni};"
     
+    def get_mensualidad_movil(self):
+        suma = 0
+        actividades = Curso.objects.filter(alumnos = self)
+
+        for i in range(actividades):
+            suma += actividades[i].mensualidad
+    
+        return suma
 
 class Actividad(models.Model):
     nombre = models.CharField(max_length=30, unique=True)
@@ -63,8 +71,6 @@ class Curso(models.Model):
             raise ValidationError("Fechas incorrectas no cumplen formato de 24hs")
         if not(self.cleaned_data['desde'] < self.cleaned_data['hasta']):
             raise ValidationError("El inicio debe ser menor que el final de la clase")
-
-        return (int(self.cleaned_data['desde']) + ":" ((self.cleaned_data['desde']*3600)%60),self.cleaned_data['hasta'])
     
     def clean_mensualidad(self):
         if self.cleaned_data['mensualidad'] < 0:
@@ -89,12 +95,33 @@ class DiaCurso(models.Model):
 
     def __str__(self) -> str:
         return f"clase de {self.curso.actividad} en {self.curso.predio} el dia {self.dia}"
+    
+
+#grupo familiar y pagos
+class GrupoFamiliar(models.Model):
+    nombre = models.CharField(max_length=50)
+    integrantes = models.ManyToManyField(User, through="SocioGrupo")
+
+    def __str__(self) -> str:
+        return f'Familia {self.nombre}'
+    
+    class Meta:
+        verbose_name_plural = "grupos familiares"
+
+class SocioGrupo(models.Model):
+    grupo = models.ForeignKey(GrupoFamiliar,on_delete=models.CASCADE)
+    socio = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    def __str__(self) -> str:
+        return f"{self.socio} de la familia {self.grupo}"
 
 class Pago(models.Model):
-    socio = models.ForeignKey(User, on_delete=models.CASCADE)
+    grupo = models.ForeignKey(GrupoFamiliar, on_delete=models.CASCADE, default=1)
     monto = models.IntegerField()
     fecha = models.DateField()
 
     def clean_pago(self):
         pass
+
+
 
