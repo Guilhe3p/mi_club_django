@@ -1,4 +1,6 @@
+from datetime import date
 from django.db import models
+from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import AbstractUser
 
@@ -23,12 +25,16 @@ class User(AbstractUser):
             suma += actividad.mensualidad
     
         return suma
+    
+    def get_mensualidad_fija(self):
+        return CambioMensualidadFija.objects.last().monto
 
     def get_actividades(self):
         return Curso.objects.filter(alumnos = self)
     
     def get_grupo_familiar(self):
         return SocioGrupo.objects.get(socio = self).grupo
+    
 
 class Actividad(models.Model):
     nombre = models.CharField(max_length=30, unique=True)
@@ -61,6 +67,7 @@ class Dia(models.Model):
 
 class Curso(models.Model):
     actividad = models.ForeignKey(Actividad, on_delete=models.CASCADE)
+    docente = models.ForeignKey(User, on_delete=models.DO_NOTHING, default=1, related_name='docente_de_curso')
     alumnos = models.ManyToManyField(User, through="Inscripcion")
     dias = models.ManyToManyField(Dia, through="DiaCurso")
     desde = models.FloatField()
@@ -91,10 +98,19 @@ class Curso(models.Model):
         return cadena
     
     def get_horario(self):
-        desdeF = f"{int(self.desde)}:{int(self.desde*60 % 60)}"
-        hastaF = f"{int(self.hasta)}:{int(self.hasta*60 % 60)}"
+        desdeHoras = str(int(self.desde))
+        hastaHoras = str(int(self.hasta))
+        for i in [desdeHoras,hastaHoras]:
+            if len(i) == 1:
+                i = "0"+i
 
-        return {'desde':desdeF,'hasta':hastaF}
+        desdeMinutos = str(int(self.desde*60 % 60))
+        hastaMinutos = str(int(self.hasta*60 % 60))
+        for i in [desdeHoras,hastaHoras]:
+            if len(i) == 1:
+                i += "0"
+
+        return {'desde':f'{desdeHoras}:{desdeMinutos}','hasta':f'{hastaHoras}:{hastaMinutos}'}
 
 class Inscripcion(models.Model):
     curso = models.ForeignKey(Curso, on_delete=models.CASCADE)
@@ -128,10 +144,26 @@ class GrupoFamiliar(models.Model):
 
     def cuota_movil_total(self):
         total = 0
-        for integrante in self.integrantes:
+        for integrante in self.integrantes.all():
             total += integrante.get_mensualidad_movil()
         return total
+
+    def cuota_fija_total(self):
+        return CambioMensualidadFija.objects.last().monto * self.integrantes.count()
+
+    def get_historial_pagos(self):
+        return Pago.objects.filter(grupo = self).order_by('-fecha')
     
+    def pagos_mes_actual(self):
+        pagos_mes_actual = self.get_historial_pagos().filter(fecha__month=timezone.now())
+        suma = 0
+        for pago in pagos_mes_actual:
+            suma += pago.monto
+        
+        return suma
+    
+    def balance_mes_actual(self):
+        return self.cuota_fija_total() + self.cuota_movil_total() - self.pagos_mes_actual()
     
 
 class SocioGrupo(models.Model):
@@ -141,13 +173,38 @@ class SocioGrupo(models.Model):
     def __str__(self) -> str:
         return f"{self.socio} de la familia {self.grupo}"
 
+#pagos de mensualidad y montos fijos/moviles
 class Pago(models.Model):
     grupo = models.ForeignKey(GrupoFamiliar, on_delete=models.CASCADE, default=1)
     monto = models.IntegerField()
     fecha = models.DateField()
 
-    def clean_pago(self):
-        pass
+    def __str__(self) -> str:
+        return f'{self.grupo} por {self.monto} el {self.fecha}'
+
+class CambioMensualidadFija(models.Model):
+    monto = models.IntegerField()
+    fecha = models.DateField()
+
+    def get_comunicado(self):
+        return f"Buenos días.\n     Se le comunica a todos los socios que a partir del {self.fecha} la cuota del club pasará a ser de ${self.monto}.\nSepan disculpar las molestias. Muchas gracias por ser parte de nuestra comunidad. \nAtte. la dirección."
+
+    def __str__(self) -> str:
+        return f'Cambio a ${self.monto} el {self.fecha}'
 
 
+#comunicados del club
+class Categoria(models.Model):
+    nombre = models.CharField(max_length=20)
 
+    def __str__(self) -> str:
+        return self.nombre
+
+class Comunicado(models.Model):
+    titulo = models.CharField(max_length=50)
+    seccion = models.ForeignKey(Categoria, on_delete=models.DO_NOTHING)
+    cuerpo = models.CharField(default="")
+    fecha = models.DateField(default=timezone.now())
+
+    def __str__(self) -> str:
+        return f'{self.seccion}, {self.titulo}, {self.fecha}'

@@ -18,3 +18,6 @@ class Perfil(LoginRequiredMixin, View):
     
 class GrupoFamiliar(Perfil):
     template_name = "socios/grupo_familiar.html"
+
+class HistorialPagos(Perfil):
+    template_name = "socios/pagos.html"

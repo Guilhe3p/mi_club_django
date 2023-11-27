@@ -6,7 +6,7 @@ urlpatterns = [
     path('', views.Perfil.as_view(), name='socio-perfil'), 
     path('grupo',views.GrupoFamiliar.as_view(), name='socio-grupo_familiar'),
     path('logout', LogoutView.as_view(), name='socio-logout'),
-    # path('Portal-socios',views.info_socio,name="info_socio"),
+    path('pagos',views.HistorialPagos.as_view(),name="socio-pagos"),
     # path('Portal-socios/reclamo', views.reclamo_socio, name="reclamo_socio"),
     # path('Portal-socios/info', views.info_socio, name="info_socio")
 

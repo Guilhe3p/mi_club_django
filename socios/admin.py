@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django import forms
 from django.contrib.auth.models import Group
-from .models import User, Curso, Predio, Actividad, Inscripcion, DiaCurso, Dia, GrupoFamiliar, SocioGrupo
+from .models import *
 
 
 #Register your models here.
@@ -12,11 +12,16 @@ admin.site.register(Inscripcion)
 admin.site.register(DiaCurso)
 admin.site.register(GrupoFamiliar)
 admin.site.register(SocioGrupo)
+admin.site.register(Pago)
+admin.site.register(CambioMensualidadFija)
+admin.site.register(Categoria)
+admin.site.register(Comunicado)
+
 
 
 admin.site.index_title = "Tablas"
 admin.site.site_header = "Administración del clu"
-admin.site.site_title = "El super kkclú"
+admin.site.site_title = "El super clú"
 
 
 

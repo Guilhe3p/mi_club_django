@@ -41,9 +41,9 @@
                                     <tbody>
                                         {% for actividad in integrante.get_actividades %}
                                         <tr>
-                                            <td>{{actividad.actividad}}</td>
-                                            <td>{{actividad.predio}}</td>
-                                            <td>{{actividad.get_dias}} de {{actividad.get_horario.desde}} a {{actividad.get_horario.hasta}}</td>
+                                            <td>{{actividad.actividad | capfirst }}</td>
+                                            <td>{{actividad.predio | title}}</td>
+                                            <td>{{actividad.get_dias | title}} de {{actividad.get_horario.desde}} a {{actividad.get_horario.hasta}}</td>
                                             <td><span class="badge bg-success">${{actividad.mensualidad}}</span></td>
                                         </tr>
                                         {% endfor %}

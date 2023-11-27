@@ -1,14 +1,19 @@
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css" integrity="sha256-2XFplPlrFClt0bIdPgpz8H7ojnk10H69xRqd9+uTShA=" crossorigin="anonymous" />
+{% extends "socios/base.html" %}
+{% load static %}
+{% block title %} Mis pagos {% endblock %}
+
+{% block content %}
+
 
 <div class="container-xl px-4 mt-4">
     
     <div class="row">
-        <div class="col-lg-4 mb-4">
+        <div class="col-lg-6 mb-4">
             <!-- Billing card 1-->
             <div class="card h-100 border-start-lg border-start-primary">
                 <div class="card-body">
-                    <div class="small text-muted">Current monthly bill</div>
-                    <div class="h3">$20.00</div>
+                    <div class="small text-muted">Mensualidad actual</div>
+                    <span class="row p-2"><div class="h3">${{socio.get_grupo_familiar.cuota_movil_total}}</div> <div class="h3"> + </div> <div class="h3 span">${{socio.get_grupo_familiar.cuota_fija_total}}</div><div class="h3"> = </div><div class="h3">${{socio.get_grupo_familiar.cuota_movil_total | add:socio.get_grupo_familiar.cuota_fija_total}}</div></span>
                     <a class="text-arrow-icon small" href="#!">
                         Switch to yearly billing
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
@@ -16,8 +21,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-4 mb-4">
-            <!-- Billing card 2-->
+        <!-- <div class="col-lg-4 mb-4">
             <div class="card h-100 border-start-lg border-start-secondary">
                 <div class="card-body">
                     <div class="small text-muted">Next payment due</div>
@@ -28,16 +32,15 @@
                     </a>
                 </div>
             </div>
-        </div>
-        <div class="col-lg-4 mb-4">
+        </div> -->
+        <div class="col-lg-6 mb-4">
             <!-- Billing card 3-->
             <div class="card h-100 border-start-lg border-start-success">
                 <div class="card-body">
-                    <div class="small text-muted">Current plan</div>
-                    <div class="h3 d-flex align-items-center">Freelancer</div>
+                    <div class="small text-muted">Por pagar este mes</div>
+                    <div class="h3 d-flex align-items-center">${{socio.get_grupo_familiar.balance_mes_actual}}</div>
                     <a class="text-arrow-icon small text-success" href="#!">
                         Upgrade plan
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-right"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                     </a>
                 </div>
             </div>
@@ -98,47 +101,33 @@
     </div>
     <!-- Billing history card-->
     <div class="card mb-4">
-        <div class="card-header">Billing History</div>
+        <div class="card-header">Historial de pagos</div>
         <div class="card-body p-0">
             <!-- Billing history table-->
             <div class="table-responsive table-billing-history">
                 <table class="table mb-0">
                     <thead>
                         <tr>
-                            <th class="border-gray-200" scope="col">Transaction ID</th>
-                            <th class="border-gray-200" scope="col">Date</th>
-                            <th class="border-gray-200" scope="col">Amount</th>
-                            <th class="border-gray-200" scope="col">Status</th>
+                            <th class="border-gray-200" scope="col">ID Transacción</th>
+                            <th class="border-gray-200" scope="col">Fecha</th>
+                            <th class="border-gray-200" scope="col">Monto</th>
+                            <th class="border-gray-200" scope="col">Estado</th>
                         </tr>
                     </thead>
                     <tbody>
+                        {% for pago in socio.get_grupo_familiar.get_historial_pagos %}
                         <tr>
-                            <td>#39201</td>
-                            <td>06/15/2021</td>
-                            <td>$29.99</td>
+                            <td>#{{pago.id}}</td>
+                            <td>{{pago.fecha}}</td>
+                            <td>{{pago.monto}}</td>
                             <td><span class="badge bg-light text-dark">Pending</span></td>
                         </tr>
-                        <tr>
-                            <td>#38594</td>
-                            <td>05/15/2021</td>
-                            <td>$29.99</td>
-                            <td><span class="badge bg-success">Paid</span></td>
-                        </tr>
-                        <tr>
-                            <td>#38223</td>
-                            <td>04/15/2021</td>
-                            <td>$29.99</td>
-                            <td><span class="badge bg-success">Paid</span></td>
-                        </tr>
-                        <tr>
-                            <td>#38125</td>
-                            <td>03/15/2021</td>
-                            <td>$29.99</td>
-                            <td><span class="badge bg-success">Paid</span></td>
-                        </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
 </div>
+
+{%endblock%}
