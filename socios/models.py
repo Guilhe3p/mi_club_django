@@ -154,7 +154,7 @@ class GrupoFamiliar(models.Model):
         return Pago.objects.filter(grupo = self).order_by('-fecha')
     
     def pagos_mes_actual(self):
-        pagos_mes_actual = self.get_historial_pagos().filter(fecha__month=timezone.now)
+        pagos_mes_actual = self.get_historial_pagos().filter(fecha__month=timezone.now().month)
         suma = 0
         for pago in pagos_mes_actual:
             suma += pago.monto

@@ -20,31 +20,31 @@ class Contacto(TemplateView):   #a cambiar por lo que corresponda
 def loginView(request):
     if request.method == "POST":
 
-        login_form = LoginForm(request.POST)
+        # login_form = LoginForm(request.POST)
   
-        if login_form.is_valid():
-            usuario = request.POST['nombre']
-            clave = request.POST['clave']
+        # if login_form.is_valid():
+        usuario = request.POST['username']
+        clave = request.POST['password']
 
-            user = authenticate(request, username = usuario, password = clave)
+        user = authenticate(request, username = usuario, password = clave)
 
-            if(user is not None):
+        if(user is not None):
 
-                login(request,user)
+            login(request,user)
 
-                messages.info(request, "Ha iniciado sesión correctamente")
+            messages.info(request, "Ha iniciado sesión correctamente")
 
-                return HttpResponseRedirect('/miPerfil')
-            else:
-                messages.info(request, "Error al iniciar sesion")
-                return redirect(reverse('login'))
+            return HttpResponseRedirect('/miPerfil')
+        else:
+            messages.info(request, "Error al iniciar sesion")
+            return redirect(reverse('login'))
 
     else: 
         if request.user.is_authenticated:
             return HttpResponseRedirect('/miPerfil')
 
         else:
-            context = {
-                'ingreso_socios': LoginForm()
-            }
-            return render(request, 'core/login.html',context)
+            # context = {
+            #     'ingreso_socios': LoginForm()
+            # }
+            return render(request, 'core/login.html')

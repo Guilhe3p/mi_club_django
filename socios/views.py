@@ -12,7 +12,7 @@ class Perfil(LoginRequiredMixin, View):
 
     def get(self, request):
         context = {
-            'socio' : User.objects.filter(id = self.request.user.id)[0]
+            'socio' : request.user
         }
         return render(request,self.template_name,context)
     
@@ -21,3 +21,9 @@ class GrupoFamiliar(Perfil):
 
 class HistorialPagos(Perfil):
     template_name = "socios/pagos.html"
+
+class NoticiasView(ListView):
+    model = Comunicado
+    template_name = "socios/noticias.html"
+    context_object_name = 'noticias'
+    ordering = ['-fecha']

@@ -8,6 +8,6 @@ urlpatterns = [
     path('logout', LogoutView.as_view(), name='socio-logout'),
     path('pagos',views.HistorialPagos.as_view(),name="socio-pagos"),
     # path('Portal-socios/reclamo', views.reclamo_socio, name="reclamo_socio"),
-    # path('Portal-socios/info', views.info_socio, name="info_socio")
+    path('noticias', views.NoticiasView.as_view(), name="noticias")
 
 ]
