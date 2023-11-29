@@ -173,13 +173,22 @@ class SocioGrupo(models.Model):
         return f"{self.socio} de la {self.grupo}"
 
 #pagos de mensualidad y montos fijos/moviles
+# class Tarjeta(models.Model):
+#     numero = models.CharField(max_length=16)
+#     hasta = models.DateField(unique_for_date="1")
+#     codigo = models.CharField(max_length=3)
+#     usuario = models.CharField(max_length=50)
+
 class Pago(models.Model):
     grupo = models.ForeignKey(GrupoFamiliar, on_delete=models.CASCADE, default=1)
     monto = models.IntegerField()
-    fecha = models.DateField()
+    fecha = models.DateField(default=timezone.now)
+    # aprobado = models.BooleanField(default=False)
+    # tarjeta = models.ForeignKey(Tarjeta, on_delete=models.DO_NOTHING, default=1)
 
     def __str__(self) -> str:
         return f'{self.grupo} por {self.monto} el {self.fecha}'
+    
 
 class CambioMensualidadFija(models.Model):
     monto = models.IntegerField()
