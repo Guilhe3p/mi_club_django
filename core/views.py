@@ -17,6 +17,12 @@ class Actividades(TemplateView): #a cambiar por una ListView en un futuro
 class Contacto(TemplateView):   #a cambiar por lo que corresponda
     template_name = "core/contacto.html"
 
+class Institucional(TemplateView):
+    template_name = "core/institucional.html"
+
+class FAQ(TemplateView):
+    template_name = "core/faq.html"
+
 def loginView(request):
     if request.method == "POST":
 
