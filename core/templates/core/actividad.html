@@ -338,32 +338,31 @@
     <!-- product -->
     <div class="product-content product-wrap clearfix product-deatil">
         <div class="row">
-            <div class="col-md-5 col-sm-12 col-xs-12">
+            <div class="col-md-4 col-sm-12 col-xs-12">
                 <div class="product-image">
                     <div id="myCarousel-2" class="carousel slide">
                         <div class="carousel-inner">
                             <!-- Slide 1 -->
                             <div class="item active">
-                                <img src="https://www.bootdey.com/image/700x400/FFB6C1/000000" class="img-responsive" alt="" />
+                                <img src="{% static actividad.url_image %}" class="img-responsive" alt="" />
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="col-md-6 col-md-offset-1 col-sm-12 col-xs-12">
+            <div class="col-md-7 col-md-offset-1 col-sm-12 col-xs-12 ml-5">
                 <h2 class="name">
-                    Actividad: {{actividad.nombre}}
+                    {{actividad.name | title}}
                 </h2>
 
                 <hr />
                
                 <div class="" id="more-information">
                     <br />
-                    <strong>Description Title</strong>
+                    <strong>Descripción</strong>
                     <p>
-                        Integer egestas, orci id condimentum eleifend, nibh nisi pulvinar eros, vitae ornare massa neque ut orci. Nam aliquet lectus sed odio eleifend, at iaculis dolor egestas. Nunc elementum pellentesque augue
-                        sodales porta. Etiam aliquet rutrum turpis, feugiat sodales ipsum consectetur nec.
+                        {{actividad.descripcion}}
                     </p>
                     
                 </div>
