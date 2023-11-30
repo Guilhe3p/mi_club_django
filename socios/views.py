@@ -3,7 +3,7 @@ from django.views.generic import ListView, View,  FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import PasswordChangeView    
 from .forms import CustomPwdChgForm, NuevoPagoForm
-from django.http import Http404, HttpResponse
+from django.http import Http404
 from .models import *
 
 
@@ -31,7 +31,7 @@ class HistorialPagos(Perfil):
             if "administrador_grupo_f" == grupo.name:
                 return super().get(request)
         
-        return HttpResponse("pagina no existe")
+        raise Http404
 
 class NoticiasView(ListView):
     model = Comunicado
