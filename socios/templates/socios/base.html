@@ -21,7 +21,7 @@
             <a class="nav-link ms-0" href="{% url 'socio-perfil' %}" target="__blank">Mis Datos</a>
             <a class="nav-link active" href="{% url 'socio-grupo_familiar' %}" target="__blank">Grupo Familiar</a>
 
-            {% if perms.socios.add_pago %}
+            {% if perms.socios.view_pago %}
             <a class="nav-link" href="{% url 'socio-pagos' %}" target="__blank">Pagos</a>
             {%endif%}
             <a class="nav-link" href="{% url 'noticias' %}"  target="__blank">Novedades</a>
